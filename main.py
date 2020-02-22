@@ -10,6 +10,10 @@ def validate(data):
         operations = list(filter(lambda x: x in ["&", "|", "~", "^"], tokens))
         if len(operations) < len(tokens):
             raise TypeError("Incorrect operation sign")
+        if var_count < 0:
+            raise TypeError("Var count cannot be negative")
+        if var_count == 1 and operations is not ["~"]:
+            raise TypeError("1 variable can be only for ~")
         return var_count, operations
     except Exception as e:
         print(f"Error while validating: {e}")
@@ -42,8 +46,10 @@ def main():
             var_count, operations = validate(input_)
     except (ValueError, TypeError):
         print("Incorrect file format")
+        return
     except (OSError, EOFError):
         print(f"Cannot open the file and read data\n")
+        return
 
     """ map from operator to function """
     apply_operation = {  # dont implement ~ because its unary
